@@ -96,7 +96,7 @@ def worker_fn(rank, world_size, backend, master_addr, master_port):
             'rank': rank,
             'backend': backend,
             'device': device_type,
-            'size_mb': sizes_mb[i],
+            'size_mb': size_mb_val,
             'avg_time_ms': avg_time
         })
         dist.barrier() # Ensure all processes finish this size before starting next
