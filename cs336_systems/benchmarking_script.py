@@ -56,6 +56,7 @@ def benchmark(
     mode: str,
     device: str,
     mixed_precision: bool,
+    torch_compile: bool,
 ):
     print(f"Using device: {device}")
 
@@ -75,6 +76,9 @@ def benchmark(
         d_ff=config["d_ff"],
         rope_theta=ROPE_THETA,
     ).to(device)
+    if torch_compile:
+        print("Compiling model with torch.compile()")
+        model = torch.compile(model)
     model.train()
 
     optimizer = AdamW(model.parameters(), lr=1e-4)
@@ -232,6 +236,7 @@ if __name__ == "__main__":
     parser.add_argument("--mode", type=str, required=True, choices=["forward", "forward_backward", "full_step"])
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", choices=["cuda", "cpu"])
     parser.add_argument("--mixed_precision", action='store_true')
+    parser.add_argument("--torch_compile", action='store_true')
 
     args = parser.parse_args()
     benchmark(**vars(args))
